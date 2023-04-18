@@ -8,18 +8,23 @@ import {
   Query,
   Body,
   NotFoundException,
-  ParseIntPipe,
+  Render,
   ValidationPipe,
+  UseInterceptors,
 } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PostsService } from './posts.service';
-
+import { TransformInterceptor } from './transform.interceptor';
 @Controller('posts')
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
   // GET /posts
   @Get()
+  /*
+   */
+  @UseInterceptors(TransformInterceptor)
+  @Render('posts')
   getPosts(@Query('status') status: 'published' | 'draft') {
     return status
       ? this.postsService.getPosts(status)
@@ -28,9 +33,10 @@ export class PostsController {
 
   // GET /posts/:id
   @Get(':id')
-  /*   getOnePost(@Param('id', ParseIntPipe) id: number) {
-   */
+  @Render('post')
   getOnePost(@Param('id') id: string) {
+    /*   getOnePost(@Param('id', ParseIntPipe) id: number) {
+     */
     try {
       return this.postsService.getOnePost(id);
     } catch (error) {

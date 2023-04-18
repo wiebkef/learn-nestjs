@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>App</title>
+</head>
+
+<body>
+    <h2>Hello</h2>
+    <ul class="posts_list">
+        {{#each data}}
+
+        <a href=posts/{{_id}}>
+            <li>{{title}} </li>
+        </a>
+        {{/each}}
+    </ul>
+</body>
+
+</html>
