@@ -7,8 +7,11 @@ import {
   Param,
   Query,
   Body,
+  NotFoundException,
+  ParseIntPipe,
+  ValidationPipe,
 } from '@nestjs/common';
-import { createPostDto } from './dto/create-post.dto';
+import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PostsService } from './posts.service';
 
@@ -18,18 +21,26 @@ export class PostsController {
   // GET /posts
   @Get()
   getPosts(@Query('status') status: 'published' | 'draft') {
-    return this.postsService.getPosts(status);
+    return status
+      ? this.postsService.getPosts(status)
+      : this.postsService.getPosts();
   }
 
   // GET /posts/:id
   @Get(':id')
+  /*   getOnePost(@Param('id', ParseIntPipe) id: number) {
+   */
   getOnePost(@Param('id') id: string) {
-    return this.postsService.getOnePost(+id);
+    try {
+      return this.postsService.getOnePost(id);
+    } catch (error) {
+      throw new NotFoundException();
+    }
   }
 
   // POST /posts
   @Post()
-  createPost(@Body() createPostDto: createPostDto) {
+  createPost(@Body(new ValidationPipe()) createPostDto: CreatePostDto) {
     return this.postsService.createPost(createPostDto);
   }
 
